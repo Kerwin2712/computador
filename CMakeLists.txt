@@ -14,8 +14,6 @@ find_package(SystemCLanguage CONFIG QUIET)
 
 if(SystemCLanguage_FOUND)
     message(STATUS "[OK] SystemC detectado en el sistema via CMake Config.")
-    add_executable(adder_8bit_sim src/main.cpp)
-    target_link_libraries(adder_8bit_sim PRIVATE SystemC::systemc)
 else()
     # 2. Verificar si el usuario definio la variable de entorno SYSTEMC_HOME
     if(DEFINED ENV{SYSTEMC_HOME})
@@ -27,8 +25,6 @@ else()
             $ENV{SYSTEMC_HOME}/lib
             $ENV{SYSTEMC_HOME}/lib64
         )
-        add_executable(adder_8bit_sim src/main.cpp)
-        target_link_libraries(adder_8bit_sim PRIVATE systemc pthread)
     else()
         # 3. Descarga y compilacion automatica de SystemC desde el repositorio oficial de Accellera
         message(STATUS "[INFO] SystemC no encontrado localmente. Descargando Accellera SystemC 3.0.2 automaticamente...")
@@ -42,8 +38,24 @@ else()
         set(ENABLE_ASSERTIONS ON CACHE BOOL "Enable SystemC assertions" FORCE)
         set(SystemC_ENABLE_TESTING OFF CACHE BOOL "Disable SystemC tests" FORCE)
         FetchContent_MakeAvailable(SystemC)
-
-        add_executable(adder_8bit_sim src/main.cpp)
-        target_link_libraries(adder_8bit_sim PRIVATE SystemC::systemc)
     endif()
+endif()
+
+# ==============================================================================
+# Objetivos de ejecucion y simulacion
+# ==============================================================================
+
+# 1. Simulador del Sumador de 8 Bits
+add_executable(adder_8bit_sim src/main.cpp)
+
+# 2. Simulador del Sumador / Restador de 8 Bits con Banderas (Z, N, C, V)
+add_executable(add_sub_8bit_sim src/main_add_sub.cpp)
+
+# Enlace de librerias
+if(TARGET SystemC::systemc)
+    target_link_libraries(adder_8bit_sim PRIVATE SystemC::systemc)
+    target_link_libraries(add_sub_8bit_sim PRIVATE SystemC::systemc)
+else()
+    target_link_libraries(adder_8bit_sim PRIVATE systemc pthread)
+    target_link_libraries(add_sub_8bit_sim PRIVATE systemc pthread)
 endif()
