@@ -1,0 +1,26 @@
+# Build directories
+build/
+bin/
+obj/
+
+# Executables and libraries
+*.exe
+*.out
+*.app
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+
+# SystemC simulation outputs
+*.vcd
+*.wlf
+
+# IDE and tooling
+.vscode/
+.vs/
+.idea/
+CMakeSettings.json
+CMakeUserPresets.json
